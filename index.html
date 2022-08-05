@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance - Company</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('https://source.unsplash.com/1600x900/?Programming,Background,Black');
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        nav {
+            border-bottom: solid orangered 5px;
+        }
+
+        #com-logo {
+            border-radius: 50%;
+            height: 50px;
+            width: 50px;
+            margin: 10px 0 0 10px;
+        }
+
+        #nav-container {
+            background-color: white;
+            display: inline-block;
+            display: flex;
+            align-items: center;
+            padding-bottom: 20px;
+            filter: opacity(0.7);
+        }
+
+        #title {
+            margin-left: 20%;
+            font-size: 150%;
+            color: white;
+            text-shadow: 2px 2px 2px black, -2px 2px 2px black, 2px -2px 2px black, -2px -2px 2px black;
+        }
+
+        input {
+            margin-left: 25%;
+            width: 50%;
+            font-size: 150%;
+            padding-left: 10px;
+            background: transparent;
+            color: white;
+            border-bottom: solid white 3px;
+        }
+
+
+        #create {
+            padding: 10px 20px 10px 20px;
+            color: white;
+            background-color: black;
+            border: solid white 2px;
+            cursor: pointer;
+            margin-top: 30px;
+        }
+
+        #sign-in-btn {
+            color: cyan;
+            cursor: pointer;
+            text-decoration: underline;
+            padding-left: 20px;
+        }
+        #signin-title {
+            text-align: center;
+            font-size: 125%;
+            color: white;
+            text-shadow: 2px 2px 2px black, -2px 2px 2px black, 2px -2px 2px black, -2px -2px 2px black;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.2.2/firebase.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js"></script>
+</head>
+
+<body>
+    <nav>
+        <span id="nav-container">
+            <img src="https://source.unsplash.com/50x50/?HTML,logo" alt="Company logo" id="com-logo">
+            <i style="font-weight: bold;margin-left: 100px;">Our Company</i>
+        </span>
+    </nav>
+    <div id="login">
+        <p id="title">Enter your username :</p>
+        <input type="text" id="name">
+
+        <p id="title">Enter your email :</p>
+        <input type="text" id="email">
+
+        <p id="title">Enter a password :</p>
+        <input type="text" id="password">
+
+        <p id="title">Enter your phone number :</p>
+        <input type="text" id="phone">
+
+        <p id="title">Enter your administrator key (only for admins) :</p>
+        <input type="text" id="admin">
+        <center>
+            <button id="create" onclick="create()">Create account</button>
+            <span id="sign-in-btn" onclick="opensignin()">Already have an account, sign in</span>
+        </center>
+    </div>
+    <div id="signin" style="display: none;">
+        <br>
+        <p id="signin-title">Welcome back, user</p>
+        <br>
+        <p id="title">Enter your name :</p>
+        <input type="text" id="s-name">
+
+        <p id="title">Enter your email :</p>
+        <input type="text" id="s-email">
+        
+        <p id="title">Enter it's password :</p>
+        <input type="text" id="s-password">
+        <br>
+        <center>
+            <button id="create" onclick="signin()">Sign in</button>
+        </center>
+    </div>
+</body>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA9O0BYnSmf73IsGPiOxd_frAJLWF0VVbQ",
+        authDomain: "attendance-website-53ff5.firebaseapp.com",
+        projectId: "attendance-website-53ff5",
+        storageBucket: "attendance-website-53ff5.appspot.com",
+        messagingSenderId: "996249010847",
+        appId: "1:996249010847:web:cb11d91a5896c1d3d5d8aa"
+    };
+
+    // Initialize Firebase
+
+    const app = firebase.initializeApp(firebaseConfig);
+
+    function create() {
+        var name = document.getElementById("name").value;
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var phone = document.getElementById("phone").value;
+        var adminKey = document.getElementById("admin").value;
+        if (name.length > 3 && email.length > 5 && password.length > 0 && phone.length == 10) {
+            if (adminKey == "admin@000") {
+                var ref = firebase.database().ref("login/" + name);
+                var data = {
+                    name: name,
+                    phone: phone,
+                    password: password,
+                    email: email,
+                    admin: true
+                }
+                ref.set(data);
+                localStorage.setItem("attendanceWeb", "name=" + name + ",email=" + email + ",password=" + password + ",phone=" + phone + ",admin=" + true);
+                window.open("attendancePage.html");
+            }
+            else {
+                var ref = firebase.database().ref("login/" + name);
+                ref.set({
+                    name: name,
+                    phone: phone,
+                    password: password,
+                    email: email,
+                    admin: false
+                });
+                localStorage.setItem("attendanceWeb", "name=" + name + ",email=" + email + ",password=" + password + ",phone=" + phone + ",admin=false");
+                window.open("attendancePage.html");
+            }
+        }
+        else {
+            alert("Please fill the fields correctly")
+        }
+
+    }
+
+    function opensignin() {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("signin").style.display = "block";
+    }
+
+    function signin() {
+        var name = document.getElementById("s-name").value;
+        var email = document.getElementById("s-email").value;
+        var password = document.getElementById("s-password").value;
+
+        var ref = firebase.database().ref("login/" + name);
+        ref.on("value", function (snapshot) {
+            var db_email = snapshot.val().email;
+            var db_password = snapshot.val().password;
+            var db_phone = snapshot.val().phone;
+            var db_admin = snapshot.val().admin;
+            if (email == db_email && password == db_password) {
+                localStorage.setItem("attendanceWeb", "name=" + name + ",email=" + email + ",password=" + password + ",phone=" + db_phone + ",admin=" + db_admin);
+                window.location.replace("attendancePage.html")
+            }
+            else {
+                alert("Invalid username, email or password");
+            }
+        });
+    }
+</script>
+
+</html>
